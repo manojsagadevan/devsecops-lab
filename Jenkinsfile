@@ -50,20 +50,24 @@ pipeline {
       stage('Static Analysis') {
          steps {
           parallel (
-             SCA: {
-                withCredentials([usernamePassword(credentialsId: 'archerysec', passwordVariable: 'ARCHERY_PASS', usernameVariable: 'ARCHERY_USER')]) {
-                sh '''
-                  export COMMIT_ID=`cat .git/HEAD`
-                  export DCHIGH=22
-                  export DCMEDIUM=100
-                  ls
-                  dependency-check --noupdate --project "Devsecops" --scan target/*.war -f XML --disableOssIndex -o $WORKSPACE/reports/dependency-check.xml
-                  bash ${WORKSPACE}/scripts/dependency_check/dependency_check.sh
+            SCA: {
+               echo  'Dependency Check'
+            },
+            SAST: {
+                 sh '''
+                    findsecbugs -progress -xml:withMessages -output $WORKSPACE/reports/findsecbugs.xml -onlyAnalyze com.notsosecure.- $WORKSPACE
+                    '''
+                    withCredentials([usernamePassword(credentialsId: 'archerysec', passwordVariable: 'ARCHERY_PASS', usernameVariable: 'ARCHERY_USER')]) {
 
-                '''
+                     sh '''
+                     export COMMIT_ID=`cat .git/HEAD`
+                     export FSBHIGH=1
+                     export FSBMEDIUM=20
+                     bash $WORKSPACE/scripts/findsecbugs/findsecbug.sh
+
+                  '''
                 }
-              },
-
+               }
           )
         }
       }
