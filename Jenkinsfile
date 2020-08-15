@@ -54,20 +54,8 @@ pipeline {
                echo  'Dependency Check'
             },
             SAST: {
-                 sh '''
-                    findsecbugs -progress -xml:withMessages -output $WORKSPACE/reports/findsecbugs.xml -onlyAnalyze com.notsosecure.- $WORKSPACE
-                    '''
-                    withCredentials([usernamePassword(credentialsId: 'archerysec', passwordVariable: 'ARCHERY_PASS', usernameVariable: 'ARCHERY_USER')]) {
-
-                     sh '''
-                     export COMMIT_ID=`cat .git/HEAD`
-                     export FSBHIGH=1
-                     export FSBMEDIUM=20
-                     bash $WORKSPACE/scripts/findsecbugs/findsecbug.sh
-
-                  '''
-                }
-               }
+                  echo  'FindSecBugs'
+            }
           )
         }
       }
@@ -134,6 +122,13 @@ pipeline {
                            exit 100
                         fi
                      '''
+                  },
+                  DAST: {
+                     withCredentials([usernamePassword(credentialsId: 'archerysec', passwordVariable: 'ARCHERY_PASS', usernameVariable: 'ARCHERY_USER')]) {
+                     sh '''
+                        bash ${WORKSPACE}/scripts/zapscanner/zapscanner_cli.sh
+                     '''
+                     }
                   },
                )
          }
