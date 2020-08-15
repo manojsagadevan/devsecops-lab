@@ -88,50 +88,51 @@ public class StudentRepository {
 		return false;
 	}
 
-	// public boolean findByLogin(String userName, String password) {
-	// 	if (dbConnection != null) {
-	// 		try {
-	// 			PreparedStatement prepStatement = dbConnection
-	// 					.prepareStatement("select password from student where userName = ?");
-	// 			prepStatement.setString(1, userName);
-
-	// 			ResultSet result = prepStatement.executeQuery();
-	// 			if (result != null) {
-	// 				while (result.next()) {
-	// 					if (result.getString(1).equals(password)) {
-	// 						return true;
-	// 					}
-	// 				}
-	// 			}
-	// 		} catch (Exception e) {
-	// 			e.printStackTrace();
-	// 		}
-	// 	}
-	// 	return false;
-	// }
-
-// VULNERABLE CODE
-	 public boolean findByLoginSQL(String userName, String password) {
-	
+	 public boolean findByLogin(String userName, String password) {
 	 	if (dbConnection != null) {
 	 		try {
-	
-	 			Statement stmt = dbConnection.createStatement();
-	 			 ResultSet rs;
-	 			 rs = stmt.executeQuery("select password from student where userName="+userName);
-	 			 if (rs != null) {
-	 					while (rs.next()) {
-	 						if (rs.getString(1).equals(password)) {
-	 							return true;
-	 						}
+	 			PreparedStatement prepStatement = dbConnection
+	 					.prepareStatement("select password from student where userName = ?");
+	 			prepStatement.setString(1, userName);
+
+	 			ResultSet result = prepStatement.executeQuery();
+	 			if (result != null) {
+	 				while (result.next()) {
+	 					if (result.getString(1).equals(password)) {
+	 						return true;
 	 					}
 	 				}
+	 			}
 	 		} catch (Exception e) {
 	 			e.printStackTrace();
 	 		}
 	 	}
 	 	return false;
 	 }
+
+// VULNERABLE CODE
+//	 public boolean findByLoginSQL(String userName, String password) {
+	
+//	 	if (dbConnection != null) {
+//	 		try {
+	
+//	 			Statement stmt = dbConnection.createStatement();
+//	 			 ResultSet rs;
+//	 			 rs = stmt.executeQuery("select password from student where userName="+userName);
+//	 			 if (rs != null) {
+//	 					while (rs.next()) {
+//	 						if (rs.getString(1).equals(password)) {
+//	 							return true;
+//	 						}
+//	 					}
+//	 				}
+//	 		} catch (Exception e) {
+//	 			e.printStackTrace();
+//	 		}
+//	 	}
+//	 	return false;
+//	 }
+
 
 	public List<Student> list() {
 		List<Student> students = new ArrayList<Student>();
