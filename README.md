@@ -1,1 +1,1 @@
-# DevSecOps Training by [NotSoSecure](https://www.notsosecure.com)
+# DevSecOps 
